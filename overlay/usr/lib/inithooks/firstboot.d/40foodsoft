@@ -4,6 +4,10 @@
 . /etc/default/inithooks
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
 
+SECRET=$(mcookie)$(mcookie)$(mcookie)
+echo "export SECRET_KEY_BASE=$SECRET" | tee -a /etc/apache2/envvars /root/.bashrc.d/foodsoft-secret
+chmod +x /root/.bashrc.d/foodsoft-secret
+
 # support partially preseeded headless deployments
 if [ -z "$APP_VARIANT" ]; then
     if [ -n "$APP_PASS" ] && [ -n "$APP_EMAIL" ]; then
@@ -12,5 +16,4 @@ if [ -z "$APP_VARIANT" ]; then
 fi
 
 $INITHOOKS_PATH/bin/foodsoft.py \
-    --pass="$APP_PASS" --email="$APP_EMAIL" --variant="$APP_VARIANT"
-
+    --pass="$APP_PASS" --email="$APP_EMAIL" 

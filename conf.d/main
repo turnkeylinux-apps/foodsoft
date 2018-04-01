@@ -9,66 +9,72 @@ WEBROOT=/var/www/foodsoft
 mv $WEBROOT/config/database.yml /tmp/foodsoft_database.yml
 rm -Rf $WEBROOT
 
-# for each fork there is a tarball named foodsoft-<fork>-<version>.tar.gz
-# the default version is called foodsoft-standard-<version>.tar.gz
-for TARBALL in $SRC/foodsoft-*.tar.gz; do
-    NAME=$(basename $TARBALL .tar.gz | sed -r 's|-v?[0-9]+\.[0-9]+.*$||')
-    APPROOT=$(dirname $WEBROOT)/$NAME
+# extract application to webroot
+mkdir -p $WEBROOT
+tar -zxf /usr/local/src/foodsoft* --strip-components 1 -C $WEBROOT
 
-    # extract application to webroot
-    mkdir -p $APPROOT
-    tar -zxf $TARBALL --strip-components 1 -C $APPROOT 
-    rm -f $TARBALL
+rm -f /usr/local/src/foodsoft*
 
-    # add database config
-    cp /tmp/foodsoft_database.yml $APPROOT/config/database.yml
+# add database config 
+cp /tmp/foodsoft_database.yml $WEBROOT/config/database.yml
 
-    # we probably have a somewhat older Ruby version; make sure Gemfile allows that
-    cd $APPROOT
-    sed -i 's|^\s*ruby |#ruby |' Gemfile
+cd $WEBROOT
 
-    # disable sharedlists in configuration, we don't use it here
-    # rename key instead of commenting to make it work too when it contains children
-    # (if it's a database.yml label, it may even break deployment)
-    sed -ri 's|^(\s*)(shared_lists:)|\1dont_use_\2|' $APPROOT/config/app_config.yml.SAMPLE
+# disable sharedlists in configuration, we don't use it here
+# rename key instead of commenting to make it work too when it contains children
+# (if it's a database.yml label, it may even break deployment)
+sed -ri 's|^(\s*)(shared_lists:)|\1dont_use_\2|' $WEBROOT/config/app_config.yml.SAMPLE
 
-    # do not require ssl, since we start with an untrusted certificate
-    sed -ri 's|^(\s*config\.force_ssl\s*=\s*).*$|\1false|' $APPROOT/config/environments/production.rb
+# do not require ssl, since we start with an untrusted certificate
+sed -ri 's|^(\s*config\.force_ssl\s*=\s*).*$|\1false|' $WEBROOT/config/environments/production.rb
 
-    # use existing MTA with sendmail
-    echo 'Foodsoft::Application.configure { config.action_mailer.delivery_method = :sendmail }' >>$APPROOT/config/environments/production.rb
+# use existing MTA with sendmail
+echo 'Foodsoft::Application.configure { config.action_mailer.delivery_method = :sendmail }' >>$WEBROOT/config/environments/production.rb
 
-    # add TurnkeyLinux credit (when a footer is available)
-    sed -ri 's|^((.*)\.pull-right)|\1= raw ("\&nbsp;on " + link_to("Turnkey Linux", "http://www.turnkeylinux.org"))\n\1|' $APPROOT/app/views/layouts/_footer.html.haml 2>/dev/null || true
+# add TurnkeyLinux credit (when a footer is available)
+sed -ri 's|^((.*)\.pull-right)|\1= raw ("\&nbsp;on " + link_to("Turnkey Linux", "http://www.turnkeylinux.org"))\n\1|' $WEBROOT/app/views/layouts/_footer.html.haml 2>/dev/null || true
 
-    # install dependencies
-    [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
-    bundle install --without test development
-    bundle exec rake foodsoft:setup:stock_config RAILS_ENV=production
-    # crontab install is done in firstboot script, since it may depend on fork
-    #bundle exec whenever --user www-data --write-crontab
-    unset HTTP_PROXY
+# set secret key for database setup
+export SECRET_KEY_BASE=turnkey
 
-    # there is only one default application, setup database for that
-    if [ $NAME = foodsoft-standard ]; then
-        bundle exec rake db:setup railties:install:migrations db:migrate RAILS_ENV=production
-        ln -s $NAME $WEBROOT
-    fi
+# update DB files to force DYMANIC row - work around Redmine/MariaDBv10.1 bug
+cat > $WEBROOT/config/initializers/ar_innodb_row_format.rb <<EOF
+ActiveSupport.on_load :active_record do
+  module ActiveRecord::ConnectionAdapters
+    class AbstractMysqlAdapter
+      def create_table_with_innodb_row_format(table_name, options = {})
+        table_options = options.reverse_merge(:options => 'ENGINE=InnoDB ROW_FORMAT=DYNAMIC')
+        create_table_without_innodb_row_format(table_name, table_options) do |td|
+         yield td if block_given?
+        end
+      end
+      alias_method_chain :create_table, :innodb_row_format
+    end
+  end
+end
+EOF
+ 
+# install dependencies
+[ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
+bundle install --without test development
+bundle exec rake foodsoft:setup:stock_config RAILS_ENV=production
 
-    bundle exec rake assets:precompile RAILS_ENV=production
+unset HTTP_PROXY
 
-    # configure permissions
-    mkdir -p $APPROOT/tmp/pids
-    chown -R root:www-data $APPROOT
-    chown -R www-data:www-data $APPROOT/tmp
-    chown -R www-data:www-data $APPROOT/log
+# setup database
+bundle exec rake db:setup railties:install:migrations db:migrate RAILS_ENV=production
+ln -s $NAME $WEBROOT
 
-done
+bundle exec rake assets:precompile RAILS_ENV=production
+
+# configure permissions
+mkdir -p $WEBROOT/tmp/pids
+chown -R root:www-data $WEBROOT
+chown -R www-data:www-data $WEBROOT/tmp
+chown -R www-data:www-data $WEBROOT/log
 
 # start foodsoft worker by default
 update-rc.d foodsoft-workers defaults
 
-# cleanup
-rm -f /tmp/foodsoft_database.yml
 /etc/init.d/mysql stop
 

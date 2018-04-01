@@ -1,0 +1,2 @@
+/usr/lib/inithooks/firstboot.d/20regen-rails-secrets
+/tmp/foodsoft_database.yml

@@ -5,5 +5,7 @@ redis-server
 libicu-dev
 
 imagemagick
+libmagic-dev
 libmagickcore-dev
+libmagick++-dev
 libmagickwand-dev
