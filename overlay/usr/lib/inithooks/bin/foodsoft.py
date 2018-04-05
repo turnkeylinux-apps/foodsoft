@@ -38,6 +38,7 @@ def popen(cmd, **kwargs):
     kwargs.setdefault('cwd', APP_DEFAULT_PATH)
     kwargs.setdefault('env', {})
     kwargs['env'].setdefault('RAILS_ENV', 'production')
+    kwargs['env'].setdefault('SECRET_KEY_BASE', os.environ['SECRET_KEY_BASE'])
     kwargs['env'].setdefault('PATH', '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin')
     return Popen(cmd, **kwargs)
 
@@ -88,7 +89,7 @@ def main():
        u.email = '%s';
        u.save! " """ % (password, email)
     
-    popen(". /root/.bashrc.d/foodsoft-secret && bundle exec rails r %s" % runner_script).wait()
+    popen("bundle exec rails r %s" % runner_script).wait()
 
     # running as root may have cached classes
     popen('chown -R www-data:www-data tmp/').wait()

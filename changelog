@@ -1,3 +1,17 @@
+turnkey-foodsoft-15.0 (1) turnkey; urgency=low
+  * Install rbenv and ruby 2.3.6 from upstream source.
+
+  * Remove foodsoft-adam fork option.
+  
+  * Use rails console for setting up admin user on first boot.
+
+  * Latest upstream version of Rails and gems.
+
+  * Note: Please refer to turnkey-core's changelog for changes common to all
+    appliances. Here we only describe changes specific to this appliance.
+
+ -- Zhenya Hvorostian <zhenya@turnkeylinux.org>  Thu, 04 Apr 2018 0100:44 +0300
+
 turnkey-foodsoft-14.2 (1) turnkey; urgency=low
   * Install rbenv and ruby 2.3.3 from upstream source.
   

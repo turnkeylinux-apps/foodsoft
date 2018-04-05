@@ -2,6 +2,7 @@
 
 SRC=/usr/local/src
 WEBROOT=/var/www/foodsoft
+SECRET_KEY=turnkey1
 
 /etc/init.d/mysql start
 
@@ -35,7 +36,7 @@ echo 'Foodsoft::Application.configure { config.action_mailer.delivery_method = :
 sed -ri 's|^((.*)\.pull-right)|\1= raw ("\&nbsp;on " + link_to("Turnkey Linux", "http://www.turnkeylinux.org"))\n\1|' $WEBROOT/app/views/layouts/_footer.html.haml 2>/dev/null || true
 
 # set secret key for database setup
-export SECRET_KEY_BASE=turnkey
+export SECRET_KEY_BASE=$SECRET_KEY
 
 # update DB files to force DYMANIC row - work around Redmine/MariaDBv10.1 bug
 cat > $WEBROOT/config/initializers/ar_innodb_row_format.rb <<EOF
@@ -72,6 +73,10 @@ mkdir -p $WEBROOT/tmp/pids
 chown -R root:www-data $WEBROOT
 chown -R www-data:www-data $WEBROOT/tmp
 chown -R www-data:www-data $WEBROOT/log
+
+# seed SECRET_KEY_BASE variable 
+echo "export SECRET_KEY_BASE=$SECRET_KEY" | tee -a /root/.bashrc.d/foodsoft-secret /etc/apache2/envvars
+chmod +x /root/.bashrc.d/foodsoft-secret
 
 # start foodsoft worker by default
 update-rc.d foodsoft-workers defaults
