@@ -1,6 +1,12 @@
 turnkey-foodsoft-15.0 (1) turnkey; urgency=low
   * Install rbenv and ruby 2.3.6 from upstream source.
 
+  * Replace MySQL with MariaDB.
+
+  * Install Adminer directly from stretch/main repo.
+
+  * Update foodsoft-standart to 4.6.0
+
   * Remove foodsoft-adam fork option.
   
   * Use rails console for setting up admin user on first boot.
