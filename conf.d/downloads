@@ -12,7 +12,6 @@ dlfs() {
     mv $SRC/$2.tar.gz $SRC/foodsoft-$3-$VERSION.tar.gz
 }
 
-# download different forks
-dlfs foodcoops/foodsoft       v4.4.1        standard
-dlfs foodcoop-adam/foodsoft   v3.3.7-adam   adam
+# download standart foodsoft
+dlfs foodcoops/foodsoft       v4.6.0        standard
 
