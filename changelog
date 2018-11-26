@@ -1,7 +1,11 @@
 turnkey-foodsoft-15.0 (1) turnkey; urgency=low
+
   * Install rbenv and ruby 2.3.6 from upstream source.
 
   * Replace MySQL with MariaDB.
+
+  * Implement mysql/mariadb conf to workaround build issues.
+    [ Jeremy Davis ]
 
   * Install Adminer directly from stretch/main repo.
 
@@ -16,9 +20,10 @@ turnkey-foodsoft-15.0 (1) turnkey; urgency=low
   * Note: Please refer to turnkey-core's changelog for changes common to all
     appliances. Here we only describe changes specific to this appliance.
 
- -- Zhenya Hvorostian <zhenya@turnkeylinux.org>  Thu, 04 Apr 2018 0100:44 +0300
+ -- Zhenya Hvorostian <zhenya@turnkeylinux.org>  Tue, 27 Nov 2018 01:00:44 +0300
 
 turnkey-foodsoft-14.2 (1) turnkey; urgency=low
+
   * Install rbenv and ruby 2.3.3 from upstream source.
   
   * Latest upstream version of Rails and gems.
