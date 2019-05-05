@@ -94,7 +94,7 @@ def main():
     # running as root may have cached classes
     popen('chown -R www-data:www-data tmp/').wait()
 
-    popen('/etc/init.d/apache2 restart')
+    popen('systemctl restart apache2')
 
 
 if __name__ == "__main__":
