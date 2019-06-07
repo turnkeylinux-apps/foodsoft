@@ -1,3 +1,17 @@
+turnkey-foodsoft-15.1 (1) turnkey; urgency=low
+
+  * Update Foodsoft to install from master branch (lastest release is getting
+    quite dated and master appears stable).
+
+  * Remove MariaDB workarounds (Debian MariaDB has been patched and relevant
+    conf now included via common).
+
+  * Adjust inithooks Apache restart command to work around untracked issue re
+    inithooks Hub API step being poluted by service output.
+    [ Zhena Hvorostian ]
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Fri, 07 Jun 2019 11:01:34 +1000
+
 turnkey-foodsoft-15.0 (1) turnkey; urgency=low
 
   * Install rbenv and ruby 2.3.6 from upstream source.
