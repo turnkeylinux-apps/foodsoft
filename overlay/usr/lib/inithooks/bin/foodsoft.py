@@ -4,7 +4,6 @@
 Option:
     --pass=     unless provided, will ask interactively
     --email=    unless provided, will ask interactively
- 
 """
 
 import os
@@ -23,8 +22,10 @@ from dialog_wrapper import Dialog
 APPS_PATH='/var/www/'
 APP_DEFAULT_PATH=os.path.join(APPS_PATH, 'foodsoft')
 
+
 def quote(s):
     return "'" + s.replace("'", "\\'") + "'"
+
 
 def usage(s=None):
     if s:
@@ -33,6 +34,7 @@ def usage(s=None):
     print >> sys.stderr, __doc__
     sys.exit(1)
 
+    
 def popen(cmd, **kwargs):
     kwargs.setdefault('shell', True)
     kwargs.setdefault('cwd', APP_DEFAULT_PATH)
@@ -41,6 +43,7 @@ def popen(cmd, **kwargs):
     kwargs['env'].setdefault('SECRET_KEY_BASE', os.environ['SECRET_KEY_BASE'])
     kwargs['env'].setdefault('PATH', '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin')
     return Popen(cmd, **kwargs)
+
 
 def main():
     try:
