@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """Set Foodsoft admin password and email
 
 Option:
@@ -14,7 +14,6 @@ import inithooks_cache
 import string
 import subprocess
 
-from executil import ExecError, system
 from subprocess import Popen, PIPE
 
 from dialog_wrapper import Dialog
@@ -29,9 +28,9 @@ def quote(s):
 
 def usage(s=None):
     if s:
-        print >> sys.stderr, "Error:", s
-    print >> sys.stderr, "Syntax: %s [options]" % sys.argv[0]
-    print >> sys.stderr, __doc__
+        print("Error:", s, file=sys.stderr)
+    print("Syntax: %s [options]" % sys.argv[0], file=sys.stderr)
+    print(__doc__, file=sys.stderr)
     sys.exit(1)
 
     
@@ -49,7 +48,7 @@ def main():
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:], "h",
                                        ['help', 'pass=', 'email='])
-    except getopt.GetoptError, e:
+    except getopt.GetoptError as e:
         usage(e)
 
     password = ""
@@ -79,7 +78,7 @@ def main():
 
     inithooks_cache.write('APP_EMAIL', email)
 
-    print "Please wait ..."
+    print("Please wait ...")
 
     # need mysql running for these updates
     popen('service mysql status >/dev/null || service mysql start').wait()

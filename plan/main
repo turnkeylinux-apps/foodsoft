@@ -9,3 +9,6 @@ libmagic-dev
 libmagickcore-dev
 libmagick++-dev
 libmagickwand-dev
+
+libsqlite3-dev
+libqtwebkit-dev
