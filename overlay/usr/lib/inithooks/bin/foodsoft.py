@@ -10,13 +10,13 @@ import os
 import sys
 import glob
 import getopt
-import inithooks_cache
+from libinithooks import inithooks_cache
 import string
 import subprocess
 
 from subprocess import Popen, PIPE
 
-from dialog_wrapper import Dialog
+from libinithooks.dialog_wrapper import Dialog
 
 APPS_PATH='/var/www/'
 APP_DEFAULT_PATH=os.path.join(APPS_PATH, 'foodsoft')
