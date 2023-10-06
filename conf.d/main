@@ -41,7 +41,7 @@ export SECRET_KEY_BASE=$SECRET_KEY
 # install dependencies
 [ "$FAB_HTTP_PROXY" ] && export HTTP_PROXY=$FAB_HTTP_PROXY
 gem install bundler
-# bundle config build.libv8 --with-system-v8 
+
 bundle install --without test development --deployment
 bundle exec rake foodsoft:setup:stock_config RAILS_ENV=production
 
