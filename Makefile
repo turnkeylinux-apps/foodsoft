@@ -1,5 +1,5 @@
 WEBMIN_FW_TCP_INCOMING = 22 80 443 12321
-RBY_VER=2.7.8
+RBY_VER=3.1
 
 include $(FAB_PATH)/common/mk/turnkey/rails.mk
 include $(FAB_PATH)/common/mk/turnkey.mk

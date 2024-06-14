@@ -13,5 +13,4 @@ dlfs() {
 }
 
 # download standart foodsoft
-dlfs foodcoops/foodsoft       v4.8.0        standard
-
+dlfs foodcoops/foodsoft       v4.8.1        standard
